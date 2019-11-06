@@ -21,7 +21,8 @@ cloudant.db.list(function(err, allDbs) {
   dbList = allDbs;
 });
 
-var odef = cloudant.db.use('o-def');
+//var odef = cloudant.db.use('o-def');
+var odef = cloudant.db.use(process.env.CLOUDANT_DB);
 var itemList = [];
 /*
 odef.view('o-def','en', { 'include_docs': true }, function(err, body) {
@@ -39,6 +40,7 @@ odef.find({selector: { $or: [{ type: 'object' }, { type: 'property'} ]}}, functi
   if(err) { 
     throw err; 
   } 
+  console.log("Buildling list");
   body.docs.forEach(function(doc) {
     doc.id = doc.odef_id;
     delete doc._id;
@@ -65,8 +67,9 @@ router.get('/search', function(req, res, next) {
 });
 /* GET odef listing by type and id. */
 router.get('/:type/:odefId', function(req, res, next) {
-  console.log(itemList.filter(item => (item.id === req.params.odefId) && (item.type === req.params.type)));
-  res.send(itemList.filter(item => (item.id === req.params.odefId) && (item.type === req.params.type))[0]);
+  console.log(req.params.type, " ", req.params.odefId);
+  console.log(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type)));
+  res.send(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type))[0]);
 });
 /* GET odef listing by id. */
 router.get('/:odefId', function(req, res, next) {
