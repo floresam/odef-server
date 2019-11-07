@@ -40,7 +40,7 @@ odef.find({selector: { $or: [{ type: 'object' }, { type: 'property'} ]}}, functi
   if(err) { 
     throw err; 
   } 
-  console.log("Buildling list");
+  console.log("Building list");
   body.docs.forEach(function(doc) {
     doc.id = doc.odef_id;
     delete doc._id;
@@ -57,6 +57,47 @@ odef.find({selector: { $or: [{ type: 'object' }, { type: 'property'} ]}}, functi
 /* GET odef listing. */
 router.get('/', function(req, res, next) {
   res.send(itemList);
+});
+
+/* GET Translate odef id to/from name. */
+router.get('/translate/:translateTarget', function(req, res, next) {
+  var target = req.params.translateTarget.toString();
+  var tmp = target.split('_');
+  var property = "_"+tmp[1];
+  var object = tmp[0];
+  tmp = object.split('~');
+  object = tmp[0];
+  var role = '~'+tmp[1];
+  var objectItem = itemList.filter(item => (item.id.toString() === object) && (item.type === "object"))[0];
+  var roleItem = itemList.filter(item => (item.id.toString() === role) && (item.type === "role"))[0];
+  var propertyItem = itemList.filter(item => (item.id.toString() === property) && (item.type === "property"))[0];
+  var result = "";
+  result += (objectItem)?objectItem.name:"";
+  result += (roleItem)?"~"+roleItem.name:"";
+  result += (propertyItem)?"_"+propertyItem.name:"";
+  res.send(result);
+});
+/* GET Translate odef id to/from name. */
+router.get('/translateTo/:translateTarget', function(req, res, next) {
+  var target = req.params.translateTarget.toString().toLowerCase();
+  var tmp = target.split('_');
+  var property = tmp[1];
+  console.log(property);
+  var object = tmp[0];
+  tmp = object.split('~');
+  object = tmp[0];
+  var role = tmp[1];
+  var objectItem = itemList.filter(item => (item.name.toString().toLowerCase() === object) && (item.type === "object"))[0];
+  var roleItem = itemList.filter(item => (item.name.toString().toLowerCase() === role) && (item.type === "role"))[0];
+  var propertyItem = itemList.filter(item => (item.name.toString().toLowerCase() === property) && (item.type === "property"))[0];
+  var result = "";
+  result += (objectItem)?objectItem.id:"";
+  console.log(JSON.stringify(objectItem))
+  result += (roleItem)?roleItem.id:"";
+  console.log(JSON.stringify(roleItem))
+  result += (propertyItem)?propertyItem.id:"";
+  console.log(JSON.stringify(propertyItem))
+  res.send(result);
 });
 
 /* GET odef listing by type and id. */
