@@ -68,12 +68,14 @@ router.get('/search', function(req, res, next) {
 /* GET odef listing by type and id. */
 router.get('/:type/:odefId', function(req, res, next) {
   console.log(req.params.type, " ", req.params.odefId);
-  console.log(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type)));
-  res.send(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type))[0]);
+  //console.log(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type)));
+  //res.send(itemList.filter(item => (parseFloat(item.id) === parseFloat(req.params.odefId)) && (item.type === req.params.type))[0]);
+  console.log(itemList.filter(item => (item.id.toString() === req.params.odefId.toString()) && (item.type === req.params.type)));
+  res.send(itemList.filter(item => (item.id.toString() === req.params.odefId.toString()) && (item.type === req.params.type))[0]);
 });
 /* GET odef listing by id. */
 router.get('/:odefId', function(req, res, next) {
-  var item = itemList.filter(item => item.id === req.params.odefId)[0];
+  var item = itemList.filter(item => item.id.toString() === req.params.odefId.toString())[0];
   console.log(JSON.stringify(item));
   res.send(item);
 });
